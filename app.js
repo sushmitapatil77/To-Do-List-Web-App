@@ -12,7 +12,6 @@ app.use(bodyParser.urlencoded({
 app.use(express.static("public"));
 
 let tasks = [];
-let worktasks = [];
 
 app.get("/", function(req, res) {
   let day = date.getDate();
@@ -24,32 +23,19 @@ app.get("/", function(req, res) {
 
 app.post("/", function(req, res) {
   let task = req.body.task;
-  if (req.body.list == "Work List") {
-    worktasks.push(task);
-    res.redirect("/work");
-  } else {
+  if(task==="" && req.body.list == "add"){
+    return false;
+  }
+  if (req.body.list == "add") {
     tasks.push(task);
+    res.redirect("/");
+  }
+  else if(req.body.list == "delete"){
+    tasks.pop(task);
     res.redirect("/");
   }
 });
 
-app.get("/work", function(req, res) {
-  res.render('list', {
-    listTitle: "Work List",
-    newItem: worktasks
-  });
-});
-
-app.post("/work", function(req, res) {
-  let worktask = req.body.worktask;
-  worktasks.push(worktask);
-  res.redirect("/");
-});
-
-
-app.get("/about", function(req, res) {
-  res.render("about");
-});
 app.listen(process.env.PORT || 3000, function(req, res) {
   console.log("Server is running on port 3000");
 });
